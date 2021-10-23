@@ -9,10 +9,10 @@ module.exports = {
       network_id: "*",       // Any network (default: none)
     },
 
-    contracts_directory: './src/contracts',
-    contracts_build_directory: './src/abis', //where the directory will build the abis
-
   },
+
+  contracts_directory: './src/contracts/',
+  contracts_build_directory: './src/abis', //where the directory will build the abis
 
   compilers: {
     solc: {
@@ -23,8 +23,6 @@ module.exports = {
         enabled: true,
         runs: 200
       },
-      //  evmVersion: "byzantium"
-      // }
     }
   },
 };
