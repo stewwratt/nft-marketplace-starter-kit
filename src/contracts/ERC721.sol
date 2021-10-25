@@ -1,10 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-
-import './ERC721Connector.sol';
-
+ 
  /*
-    test 
     Building out the mint function:
         1. NFT to point to an address
         2. Keep track of the Token ids
@@ -17,9 +14,7 @@ import './ERC721Connector.sol';
     2. add internal visibility to the signature
     3. set the tokenOwner of the tokenID to the address
     4. increase the owner token count by 1 each time the function is called
-
-
- */
+*/
 
 contract ERC721 {
     
@@ -47,7 +42,7 @@ contract ERC721 {
     }
 
 
-    function mint(address to, uint256 tokenId) internal {
+    function _mint(address to, uint256 tokenId) internal virtual {
         // requires that the address isn't zero
         require(to != address(0), 'Mint address is not an address!');
         // requires that the token does not already exist
@@ -62,4 +57,26 @@ contract ERC721 {
         // a log of the mint that has been performed
         emit Transfer(address(0), to, tokenId);
     }
+
+    /// @notice Count all NFTs assigned to an owner
+    /// @dev NFTs assigned to the zero address are considered invalid, and this
+    ///  function throws for queries about the zero address.
+    /// @param _owner An address for whom to query the balance
+    /// @return The number of NFTs owned by `_owner`, possibly zero
+    function balanceOf(address _owner) public view returns(uint256) {
+        require(_owner != address(0), 'Error - Invalid address!');
+        return _ownedTokensCount[_owner];
+    }
+
+    /// @notice Find the owner of an NFT
+    /// @dev NFTs assigned to zero address are considered invalid, and queries
+    ///  about them do throw.
+    /// @param _tokenId The identifier for an NFT
+    /// @return The address of the owner of the NFT
+    function ownerOf(uint _tokenId) public view returns(address) {
+        address owner = _tokenOwner[_tokenId];
+        require(owner != address(0), 'Error - This token is invalid');
+        return owner;
+    }
+
 }
