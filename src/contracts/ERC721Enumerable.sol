@@ -2,8 +2,9 @@
 pragma solidity ^0.8.0;
 
 import './ERC721.sol';
+import './interfaces/IERC721Enumerable.sol';
 
-contract ERC721Enumerable is ERC721 {
+contract ERC721Enumerable is ERC721, IERC721Enumerable {
 
     uint256[] private _allTokens;
 
@@ -16,6 +17,12 @@ contract ERC721Enumerable is ERC721 {
     //mapping from token ID to index of the owner tokens list
     mapping(uint256 => uint256) private _ownedTokensIndex;
 
+    constructor() {
+        _registerInterface(bytes4(keccak256('balanceOf(bytes4)')^
+        keccak256('ownerOf(bytes4)')^
+        keccak256('transferFrom(bytes4)')));
+    }
+ 
     function _mint(address to, uint256 tokenId) internal override(ERC721) {
         super._mint(to, tokenId);
         //2 things!
@@ -44,27 +51,20 @@ contract ERC721Enumerable is ERC721 {
 
     //TWO MORE FUNCTIONS 
     //1. one that returns tokenByIndex
-    function tokenByIndex(uint256 index) public view returns(uint256){
+    function tokenByIndex(uint256 index) public override view returns(uint256){
         //make sure that the index is not out of bounds of the total supply
         require(index < totalSupply(), 'Global index is out of bounds!');
         //return from the array all tokens
         return _allTokens[index];
     }
     //2. one that returns tokenOfOwnerByIndex
-    function tokenOfOwnerByIndex(address owner, uint256 index) public view returns(uint256){
-        //require that the address is valid
-
+    function tokenOfOwnerByIndex(address owner, uint256 index) public  override view returns(uint256){
+        //require that the address is holding tokens
+        require(index < balanceOf(owner), 'Owner index is out of bounds!');
         return _ownedTokens[owner][index];
     }
     // return the total supply of the _allTokens array
-    function totalSupply() public view returns(uint256) {
+    function totalSupply() public override view returns(uint256) {
         return _allTokens.length;
     }
-
-/*
-    function _addTokensToOwnerStack(address to, uint256 tokenId) private {
-        uint256[] memory ownerStack;
-        ownerStack = 
-    }
-    */
 }
