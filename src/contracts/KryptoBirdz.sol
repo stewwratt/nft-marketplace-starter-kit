@@ -6,7 +6,7 @@ import './ERC721Connector.sol';
 contract KryptoBird is ERC721Connector {
 
     // array to store our nfts
-    string[] public KryptoBirdz;
+    string[] public kryptoBirdz;
 
     mapping(string => bool) _kryptoBirdzExists;
 
@@ -20,8 +20,8 @@ contract KryptoBird is ERC721Connector {
         require(!_kryptoBirdzExists[_kryptoBird], 'Error - KryptoBird already exists!');
         // this is deprecated uint _id = KryptoBirdz.push(_kryptoBird);
         // .push no longer returns the length but a ref to the added element
-        KryptoBirdz.push(_kryptoBird);
-        uint _id = KryptoBirdz.length - 1;
+        kryptoBirdz.push(_kryptoBird);
+        uint _id = kryptoBirdz.length - 1;
         _mint(msg.sender, _id);
         _kryptoBirdzExists[_kryptoBird] = true;
     }
