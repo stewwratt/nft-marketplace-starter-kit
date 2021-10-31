@@ -1,0 +1,45 @@
+
+body {
+    height: 300vh;
+    background: rgb(255,255,255);
+    background: linear-gradient(90deg, rgb(240, 240, 240) 29%, rgb(211, 240, 232) 72%, rgba(255,217,224,1) 100%);
+    animation: gradientBG 15s ease infinite;
+    background-size: 300% 300%;
+}
+
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.token {
+    width: 300px;
+    box-shadow: 0 8px 16px rgba(5,5,5,0.3);
+    padding: 2px 16px;
+    margin: 16px;
+    border-radius: 8px;
+    /**background: url(dat: image/png)**/
+}
+
+img {
+    border: .3px rgba(204, 204, 204, 0.3);
+    box-shadow: 10px 10px 8px rgba(5,5,5,0.3);
+    border-radius: 4px;
+    padding: 5px;
+    width: 150px;
+    margin-top: 10px;
+}
+
+.container-filled {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    top: 15%;
+}
