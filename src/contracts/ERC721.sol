@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import './ERC165.sol';
 import './interfaces/IERC721.sol';
+import './libraries/Counters.sol';
  /*
     Building out the mint function:
         1. NFT to point to an address
@@ -19,13 +20,14 @@ import './interfaces/IERC721.sol';
 */
 
 contract ERC721 is ERC165, IERC721 {
-    
+    using SafeMath for uint256;
+    using Counters for Counters.Counter;
     // mapping in solidity creates a hash table of key pair values
     // mapping from tokenid to the owner
     mapping(uint256 => address) private _tokenOwner;
 
     // mapping from owner to number of owned tokens
-    mapping(address => uint256) private _ownedTokensCount;
+    mapping(address => Counters.Counter) private _ownedTokensCount;
     //mapping(uint256 => bool) private _isMinted; //made this as an alternative to the _exists function from clarians solution
     mapping(uint256 => address) private _tokenApprovals;
 
@@ -47,7 +49,10 @@ contract ERC721 is ERC165, IERC721 {
         return owner != address(0);
     }
 
-
+    // this function is not safe
+    // any type of mathematics can be held to dubious standards
+    // in SOLIDITY (ADDITION OVERFLOW)
+    //UPDATE: NOW IT IS SAFE because we implemented the counters
     function _mint(address to, uint256 tokenId) internal virtual {
         // requires that the address isn't zero
         require(to != address(0), 'Mint address is not an address!');
@@ -57,9 +62,10 @@ contract ERC721 is ERC165, IERC721 {
         // we are adding a new address with a token id for minting
         _tokenOwner[tokenId] = to;
         // increasing the count of an address' owned tokens
-        _ownedTokensCount[to] += 1;
+        _ownedTokensCount[to].increment();
         //_isMinted[tokenId] = true; part of my initial solution, since corrected
         
+
         // a log of the mint that has been performed
         emit Transfer(address(0), to, tokenId);
     }
@@ -96,12 +102,14 @@ contract ERC721 is ERC165, IERC721 {
     /// @param _from The current owner of the NFT
     /// @param _to The new owner
     /// @param _tokenId The NFT to transfer
+
+    // this is not safe! safemath. UPDATE: NOW IT IS SAFE because we implemented the counters
     function _transferFrom(address _from, address _to, uint256 _tokenId) internal {
         require(_to != address(0), 'Error - ERC721 transfer to the zero address');
         require(ownerOf(_tokenId) == _from, 'Error - Attempt to transfer a token the address does not own!');
 
-        _ownedTokensCount[_from] -= 1;
-        _ownedTokensCount[_to] += 1;
+        _ownedTokensCount[_from].decrement();
+        _ownedTokensCount[_to].increment();
 
         _tokenOwner[_tokenId] = _to;
         
@@ -119,7 +127,7 @@ contract ERC721 is ERC165, IERC721 {
     /// @return The number of NFTs owned by `_owner`, possibly zero
     function balanceOf(address _owner) public override view returns(uint256) {
         require(_owner != address(0), 'Error - Invalid address!');
-        return _ownedTokensCount[_owner];
+        return _ownedTokensCount[_owner].current();
     }
 
     /// @notice Find the owner of an NFT
